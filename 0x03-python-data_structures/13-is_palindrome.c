@@ -1,55 +1,54 @@
 #include "lists.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 /**
- * allocate_memory - allocate required memory for an array
- * @head: head node of listint_t
- *
- * Return: allocated array
+ *add_nodeint - adds a new node at the beginning of a listint_t list
+ *@head: head of listint_t
+ *@n: int to add in listint_t list
+ *Return: address of the new element, or NULL if it failed
  **/
-int *allocate_memory(listint_t *head)
+listint_t *add_nodeint(listint_t **head, const int n)
 {
-	int *arr;
-	size_t size;
-	
-	size = 0;
-	while (head)
-		size++, head = head->next;
-	arr = malloc(sizeof(int) * size);
-	if (!arr)
-		exit(1);
-	return (arr);
-}
+	listint_t *new;
 
+	new = malloc(sizeof(listint_t));
+
+	if (new == NULL)
+		return (NULL);
+	new->n = n;
+	new->next = *head;
+	*head = new;
+	return (new);
+}
 /**
- *is_palindrome - checks if a list is palindrom
- *@head: pointer to head node of list
- *
- *Return: 1 (Palindrom) | 0 (Not a Palindrom)
+ *is_palindrome - identify if a syngle linked list is palindrome
+ *@head: head of listint_t
+ *Return: 1 if it is palindrome else 0
  **/
 int is_palindrome(listint_t **head)
 {
-	listint_t *tmp;
-	int i, *values;
-	
-	if (!head || !(*head))
+	listint_t *head2 = *head;
+	listint_t *aux = NULL, *aux2 = NULL;
+
+	if (*head == NULL || head2->next == NULL)
 		return (1);
-	values = allocate_memory(*head);
-	tmp = *head, i = -1;
-	while (tmp)
+	while (head2 != NULL)
 	{
-		values[++i] = tmp->n;
-		tmp = tmp->next;
+		add_nodeint(&aux, head2->n);
+		head2 = head2->next;
 	}
-	tmp = *head;
-	for (; i >= 0; i--)
+	aux2 = aux;
+	while (*head != NULL)
 	{
-		if (values[i] != tmp->n)
+		if ((*head)->n != aux2->n)
 		{
-			free(values);
+			free_listint(aux);
 			return (0);
 		}
-		tmp = tmp->next;
+		*head = (*head)->next;
+		aux2 = aux2->next;
 	}
-	free(values);
+	free_listint(aux);
 	return (1);
 }
